@@ -1,5 +1,5 @@
 {
-  "name": "@primitivefinance/examples",
+  "name": "@primitivefi/rmm-examples",
   "version": "0.0.1",
   "description": "Example contracts showing how to interact with Primitive protocol.",
   "keywords": [
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.1.0",
-    "@primitivefinance/rmm-periphery": "^0.2.8"
+    "@primitivefi/rmm-manager": "^2.0.0-beta.1"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
