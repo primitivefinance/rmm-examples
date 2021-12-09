@@ -1,6 +1,6 @@
 {
   "name": "@primitivefi/rmm-examples",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Example contracts showing how to interact with Primitive protocol.",
   "keywords": [
     "primitive",
