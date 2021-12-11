@@ -37,52 +37,101 @@ describe('LiquidityWrapper', () => {
   });
 
   describe('success cases', () => {
-    it('wraps liquidity pool tokens', async () => {
+    describe('when wrapping liquidity pool tokens', () => {
+      it('wraps liquidity pool tokens', async () => {
+        await lpToken.setApprovalForAll(wrappedLpToken.address, true);
+        await wrappedLpToken.wrap(deployer.address, 100);
+
+        expect(await wrappedLpToken.balanceOf(deployer.address)).to.be.equal(100);
+        expect(await lpToken.balanceOf(deployer.address, poolId)).to.be.equal(0);
+        expect(await lpToken.balanceOf(wrappedLpToken.address, poolId)).to.be.equal(100);
+      });
+
+      it('emits the Wrap event', async () => {
+        await lpToken.setApprovalForAll(wrappedLpToken.address, true);
+        await expect(wrappedLpToken.wrap(deployer.address, 100)).to.emit(wrappedLpToken, 'Wrap').withArgs(
+          deployer.address, deployer.address, 100,
+        );
+      });
+
+      it('wraps liquidity pool tokens (using the Multicall)', async () => {
+        const sig = await getERC1155PermitSignature(
+          deployer,
+          lpToken.address,
+          wrappedLpToken.address,
+          true,
+          999999999999999, {
+            nonce: 0,
+            name: 'PrimitiveManager',
+            chainId: await deployer.getChainId(),
+            version: '1',
+          },
+        );
+
+        const selfPermitData = wrappedLpToken.interface.encodeFunctionData(
+          'selfPermit', [
+            deployer.address,
+            true,
+            999999999999999,
+            sig.v,
+            sig.r,
+            sig.s
+          ],
+        );
+
+        const wrapData = wrappedLpToken.interface.encodeFunctionData(
+          'wrap', [
+            deployer.address,
+            100,
+          ],
+        );
+
+        await wrappedLpToken.multicall([selfPermitData, wrapData]);
+
+        expect(await wrappedLpToken.balanceOf(deployer.address)).to.be.equal(100);
+        expect(await lpToken.balanceOf(deployer.address, poolId)).to.be.equal(0);
+        expect(await lpToken.balanceOf(wrappedLpToken.address, poolId)).to.be.equal(100);
+      });
+    });
+
+    describe('when unwrapping liquidity pool tokens', () => {
+      beforeEach(async () => {
+        await lpToken.setApprovalForAll(wrappedLpToken.address, true);
+        await wrappedLpToken.wrap(deployer.address, 100);
+      });
+
+      it('unwraps liquidity pool tokens', async () => {
+        await wrappedLpToken.unwrap(deployer.address, 100);
+
+        expect(await wrappedLpToken.balanceOf(deployer.address)).to.be.equal(0);
+        expect(await lpToken.balanceOf(deployer.address, poolId)).to.be.equal(100);
+        expect(await lpToken.balanceOf(wrappedLpToken.address, poolId)).to.be.equal(0);
+      });
+
+      it('emits the Unwrap event', async () => {
+        await expect(wrappedLpToken.unwrap(deployer.address, 100)).to.emit(wrappedLpToken, 'Unwrap').withArgs(
+          deployer.address, deployer.address, 100,
+        )
+      });
+    });
+  });
+
+  describe('fail cases', () => {
+    it('fails to wrap more than the balance', async () => {
+      await lpToken.connect(signers[1]).setApprovalForAll(wrappedLpToken.address, true);
+
+      await expect(
+        wrappedLpToken.wrap(signers[1].address, 100),
+      ).to.be.reverted
+    });
+
+    it('fails to unwrap more than the balance', async () => {
       await lpToken.setApprovalForAll(wrappedLpToken.address, true);
       await wrappedLpToken.wrap(deployer.address, 100);
 
-      expect(
-        await wrappedLpToken.balanceOf(deployer.address),
-      ).to.be.equal(100);
-    });
-
-    it('wraps liquidity pool tokens (using the Multicall)', async () => {
-      const sig = await getERC1155PermitSignature(
-        deployer,
-        lpToken.address,
-        wrappedLpToken.address,
-        true,
-        999999999999999, {
-          nonce: 0,
-          name: 'PrimitiveManager',
-          chainId: await deployer.getChainId(),
-          version: '1',
-        },
-      );
-
-      const selfPermitData = wrappedLpToken.interface.encodeFunctionData(
-        'selfPermit', [
-          deployer.address,
-          true,
-          999999999999999,
-          sig.v,
-          sig.r,
-          sig.s
-        ],
-      );
-
-      const wrapData = wrappedLpToken.interface.encodeFunctionData(
-        'wrap', [
-          deployer.address,
-          100,
-        ],
-      );
-
-      await wrappedLpToken.multicall([selfPermitData, wrapData]);
-
-      expect(
-        await wrappedLpToken.balanceOf(deployer.address),
-      ).to.be.equal(100);
+      await expect(
+        wrappedLpToken.unwrap(deployer.address, 101),
+      ).to.be.reverted
     });
   });
 });
