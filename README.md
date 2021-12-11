@@ -10,8 +10,11 @@ These example contracts are written for educational purposes and were **NOT AUDI
 
 ### LiquidityWrapper
 
-The PrimitiveManager tokenized liquidity pool tokens using the ERC1155 standard. This allows significant gas optimizations at a contract level, but adds a little bit of friction when it comes to integrating with other protocols. Luckily a straightforward solution to this problem is to use a "wrapper" contract.
+The PrimitiveManager tokenized liquidity pool tokens using the ERC1155 standard. This allows significant gas optimizations at a contract level, but adds a little bit of friction when it comes to integrating with other protocols, more used to deal with ERC20 tokens. Luckily a straightforward solution to this problem is to use a "wrapper" contract.
 
-The `LiquidityWrapper` contract wraps ERC1155 tokens from a specific PrimitiveManager pool and issues ERC20 tokens to the users.
+The specifications of the `LiquidityWrapper` contract are extremely simple:
+- A wrapper can only be associated with a unique PrimitiveManager pool
+- It allows users to deposit (wrap) liquidity pool tokens (ERC1155) to receive wrapped tokens (ERC20)
+- It allows users to withdraw (unwrap) wrapped liquidity pool tokens (ERC20) to get their unwrapped tokens back (ERC1155)
 
 See the [code here](contracts/liquidityWrapper/LiquidityWrapper.sol).
