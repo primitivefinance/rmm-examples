@@ -8,6 +8,20 @@ import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 /// @title   Interface of Liquidity Tokens Wrapper contract
 /// @author  Primitive
 interface ILiquidityWrapper is IERC20, IERC1155Receiver, IMulticall {
+    /// EVENTS ///
+
+    /// @notice        Emitted when {from} wraps {amount} liquidity pool tokens for {to}
+    /// @param from    Address wrapping the liquidity pool tokens
+    /// @param to      Address receiving the wrapped liquidity pool tokens
+    /// @param amount  Amount of liquidity pool tokens wrapped
+    event Wrap(address indexed from, address indexed to, uint256 amount);
+
+    /// @notice        Emitted when {from} unwraps {amount} liquidity pool tokens for {to}
+    /// @param from    Address unwrapping the liquidity pool tokens
+    /// @param to      Address receiving the unwrapped liquidity pool tokens
+    /// @param amount  Amount of liquidity pool tokens unwrapped
+    event Unwrap(address indexed from, address indexed to, uint256 amount);
+
     /// EFFECT FUNCTIONS ///
 
     /// @notice          Self approves the wrapper to move {owner} liquidity pool tokens by using permit

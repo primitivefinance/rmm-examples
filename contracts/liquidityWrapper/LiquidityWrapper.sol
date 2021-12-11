@@ -52,11 +52,13 @@ contract LiquidityWrapper is ILiquidityWrapper, ERC20, ERC1155Holder, Multicall 
     function wrap(address to, uint256 amount) external override {
         IERC1155(manager).safeTransferFrom(msg.sender, address(this), poolId, amount, data);
         _mint(to, amount);
+        emit Wrap(msg.sender, to, amount);
     }
 
     /// @inheritdoc ILiquidityWrapper
     function unwrap(address to, uint256 amount) external override {
         _burn(msg.sender, amount);
         IERC1155(manager).safeTransferFrom(address(this), to, poolId, amount, data);
+        emit Unwrap(msg.sender, to, amount);
     }
 }
