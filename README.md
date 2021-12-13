@@ -1,3 +1,32 @@
-# ▽ Primitive Examples
+![](https://pbs.twimg.com/profile_banners/1241234631707381760/1588727988/1500x500)
 
-Example contracts showing how to interact with Primitive protocol.
+# Primitive Examples
+
+[![License](https://img.shields.io/badge/License-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+This repository contains examples showing how to interact with the Primitive Protocol's Automated Market Maker named "RMM-01".
+
+These example contracts are written for educational purposes and were **NOT AUDITED**. Keep this in mind before using them in production.
+
+## Contracts
+
+### LiquidityWrapper
+
+The PrimitiveManager tokenized liquidity pool tokens using the ERC1155 standard. This allows significant gas optimizations at a contract level, but adds a little bit of friction when it comes to integrating with other protocols, more used to deal with ERC20 tokens. Luckily a straightforward solution to this problem is to use a "wrapper" contract.
+
+The specifications of the `LiquidityWrapper` contract are extremely simple:
+- A wrapper can only be associated with a unique PrimitiveManager pool
+- It allows users to deposit (wrap) liquidity pool tokens (ERC1155) to receive wrapped tokens (ERC20)
+- It allows users to withdraw (unwrap) wrapped liquidity pool tokens (ERC20) to get their unwrapped tokens back (ERC1155)
+
+See the code [here](contracts/liquidityWrapper/LiquidityWrapper.sol).
+
+### PrimitiveChef
+
+Based on the [MasterChef](https://github.com/sushiswap/sushiswap/blob/canary/contracts/MasterChef.sol) created by SushiSwap, this contract is a reimplementation of the code with the support of ERC1155 tokens, the token standard used by the PrimitiveManager.
+
+In a few words, the `PrimitiveChef` goals are to:
+- Allow the creation of staking pools
+- Reward users depositing liquidity pool tokens in these staking pools
+
+See the code [here](contracts/primitiveChef/PrimitiveChef.sol).
