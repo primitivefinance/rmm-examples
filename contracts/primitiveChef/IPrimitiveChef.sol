@@ -11,84 +11,72 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
 import "./RewardToken.sol";
 
+/// @title   Interface of the PrimitiveChef contract
+/// @author  Primitive
 interface IPrimitiveChef is IMulticall {
+    /// STRUCTS ///
 
-    /// @notice Info of each user
-    /// @param amount  How many LP tokens the user has provided
-    /// @param rewardDebt
+    /// @notice             Info of a user
+    /// @return amount      Amount of liquidity pool tokens provided by the user
+    /// @return rewardDebt  Pending reward debt of the user
     struct UserInfo {
-        uint256 amount; // How many LP tokens the user has provided.
-        uint256 rewardDebt; // Reward debt. See explanation below.
-        //
-        // We do some fancy math here. Basically, any point in time, the amount of SUSHIs
-        // entitled to a user but is pending to be distributed is:
-        //
-        //   pending reward = (user.amount * pool.accRewardPerShare) - user.rewardDebt
-        //
-        // Whenever a user deposits or withdraws LP tokens to a pool. Here's what happens:
-        //   1. The pool's `accRewardPerShare` (and `lastRewardBlock`) gets updated.
-        //   2. User receives the pending reward sent to his/her address.
-        //   3. User's `amount` gets updated.
-        //   4. User's `rewardDebt` gets updated.
+        uint256 amount;
+        uint256 rewardDebt;
     }
 
-    // Info of each pool.
+    /// @notice                    Info of a staking pool
+    /// @return lpToken            Address of the PrimitiveManager contract
+    /// @return tokenId            Id of the PrimitiveManager pool
+    /// @return allocPoinnt        Allocation points assigned to this pool
+    /// @return lastRewardBlock    Last block number with a reward distribution
+    /// @return accRewardPerShare  Accumulated reward per share with a 1e12 precision
     struct PoolInfo {
-        IERC1155 lpToken; // Address of LP token contract.
-        uint256 poolId;
-        uint256 allocPoint; // How many allocation points assigned to this pool. SUSHIs to distribute per block.
-        uint256 lastRewardBlock; // Last block number that SUSHIs distribution occurs.
-        uint256 accRewardPerShare; // Accumulated SUSHIs per share, times 1e12. See below.
+        IERC1155 lpToken;
+        uint256 tokenId;
+        uint256 allocPoint;
+        uint256 lastRewardBlock;
+        uint256 accRewardPerShare;
     }
 
-    function rewardToken() external view returns (RewardToken);
+    /// EVENTS ///
 
-    // Dev address.
-    function collector() external view returns (address);
-
-    // Block number when bonus SUSHI period ends.
-    function bonusEndBlock() external view returns (uint256);
-
-    // SUSHI tokens created per block.
-    function rewardPerBlock() external view returns (uint256);
-
-    // Bonus muliplier for early sushi makers.
-    function BONUS_MULTIPLIER() external view returns (uint256);
-
-    // Info of each pool.
-    function pools(uint256) external view returns (
-        IERC1155 lpToken,
-        uint256 poolId,
-        uint256 allocPoint,
-        uint256 lastRewardBlock,
-        uint256 accRewardPerShare
-    );
-
-    // Info of each user that stakes LP tokens.
-    function users(uint256, address) external view returns (
-        uint256 amount,
-        uint256 rewardDebt
-    );
-
-    // Total allocation poitns. Must be the sum of all allocation points in all pools.
-    function totalAllocPoint() external view returns (uint256);
-
-    // The block number when SUSHI mining starts.
-    function startBlock() external view returns (uint256);
-
+    /// @notice        Emitted when a user deposits liquidity pool tokens in a staking pool
+    /// @param user    Address of the user depositing into the staking pool
+    /// @param pid     Id of the staking pool
+    /// @param amount  Amount of liquidity pool tokens deposited into the staking pool
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
 
+    /// @notice        Emitted when a user withdraws liquidity pool tokens from a staking pool
+    /// @param user    Address of the user withdrawing from the staking pool
+    /// @param pid     Id of the staking pool
+    /// @param amount  Amount of liquidity tokens withdrawn from the staking pool
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
 
+    /// @notice      Emitted when a user emergency withdraws liquidity pool tokens from a staking pool
+    /// @param user  Address of the user emergency withdrawing from the staking pool
+    /// @param pid   Id of the staking pool
     event EmergencyWithdraw(
         address indexed user,
         uint256 indexed pid,
         uint256 amount
     );
 
+    /// ERRORS ///
 
+    /// @notice  Thrown when a user tries to withdraw more liquidity pool tokens than what they staked
+    error WithdrawAmountError();
+
+    /// EFFECT FUNCTIONS ///
+
+    /// @notice          Self approves this contract to move {lpToken} liquidity pool tokens from {owner}'s wallet
+    /// @param lpToken   Address of the PrimitiveManager contract
+    /// @param owner     Address of the owner of the tokens
+    /// @param approved  True if approval should be granted
+    /// @param v         V part of the signature
+    /// @param r         R part of the signature
+    /// @param s         S part of the signature
     function selfPermit(
-        address house,
+        address lpToken,
         address owner,
         bool approved,
         uint256 deadline,
@@ -97,51 +85,127 @@ interface IPrimitiveChef is IMulticall {
         bytes32 s
     ) external;
 
-    function poolLength() external view returns (uint256);
-
-    // Add a new lp to the pool. Can only be called by the owner.
-    // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
+    /// @notice            Adds a new liquidity pool token to the contract
+    /// @dev               Adding the same PrDo not add the same liquidity pool token twice, or this will mess up the reward calculations
+    /// @param allocPoint  Allocation points for this staking pool
+    /// @param lpToken     Address of the PrimitiveManager
+    /// @param tokenId     Id of the PrimitiveManager pool
+    /// @param withUpdate  True if the reward variables of the pool should be updated
     function add(
         uint256 allocPoint,
         IERC1155 lpToken,
-        uint256 poolId,
+        uint256 tokenId,
         bool withUpdate
     ) external;
 
-    // Update the given pool's SUSHI allocation point. Can only be called by the owner.
+    /// @notice            Updates the allocation points of a pool
+    /// @param pid         Id of the pool to update
+    /// @param allocPoint  New allocation points for the pool
+    /// @param withUpdate  True if the reward variables of the pool should be updated
     function set(
         uint256 pid,
         uint256 allocPoint,
         bool withUpdate
     ) external;
 
-    // Return reward multiplier over the given from to to block.
-    function getMultiplier(uint256 from, uint256 to)
-        external
-        view
-        returns (uint256);
-
-    // View function to see pending SUSHIs on frontend.
-    function pendingReward(uint256 pid, address account)
-        external
-        view
-        returns (uint256);
-
-    // Update reward vairables for all pools. Be careful of gas spending!
+    /// @notice  Mass updates the reward variables for all the pools
     function massUpdatePools() external;
 
-    // Update reward variables of the given pool to be up-to-date.
+    /// @notice     Updates the reward variables of a given pool
+    /// @param pid  Id of the poold to update
     function updatePool(uint256 pid) external;
 
-    // Deposit LP tokens to MasterChef for SUSHI allocation.
+    /// @notice        Deposits {amount} of liquidity pool tokens into pool {pid}
+    /// @param pid     Id of the pool to deposit into
+    /// @param amount  Amount of liquidity pool tokens to deposit into the pool
     function deposit(uint256 pid, uint256 amount) external;
 
-    // Withdraw LP tokens from MasterChef.
+    /// @notice        Withdraws {amount} of liquidity pool tokens from pool {poolId}
+    /// @param pid     Id of the pool to withdraw from
+    /// @param amount  Amount of liquidity pool tokens to withdraw from the pool
     function withdraw(uint256 pid, uint256 amount) external;
 
-    // Withdraw without caring about rewards. EMERGENCY ONLY.
+    /// @notice     Emergency withdraws all the liquidity pool tokens from pool {poolId},
+    ///             without getting the reward
+    /// @param pid  Id of the pool to emergency withdraw from
     function emergencyWithdraw(uint256 pid) external;
 
-    // Update dev address by the previous dev.
+    /// @notice Sets the address of the dev bonus collector
+    /// @param newCollector Address of the new collector
     function setCollector(address newCollector) external;
+
+    /// VIEW FUNCTIONS ///
+
+    /// @notice  Returns the token rewarded to the stakers
+    /// @return  Contract of the reward token
+    function rewardToken() external view returns (RewardToken);
+
+    /// @notice  Returns the address collecting the dev bonus
+    /// @return  Address of the collector
+    function collector() external view returns (address);
+
+    /// @notice  Returns the end of the bonus period
+    /// @return  Block number of the end of the bonus period
+    function bonusEndBlock() external view returns (uint256);
+
+    /// @notice  Returns the reward awarded per block
+    /// @return  Reward amount per block (with decimals)
+    function rewardPerBlock() external view returns (uint256);
+
+    /// @notice  Returns the bonus multiplier for early stakers
+    /// @return  Multiplier bonus amount
+    function BONUS_MULTIPLIER() external view returns (uint256);
+
+    /// @notice                    Returns the info of {poolId}
+    /// @param poolId              Id of the staking pool
+    /// @return lpToken            Address of the PrimitiveManager contract emitting the liquidity pool tokens
+    /// @return tokenId            Id of the PrimitiveManager pool
+    /// @return allocPoint        Allocation points assigned to this pool
+    /// @return lastRewardBlock    Last block number with a reward distribution
+    /// @return accRewardPerShare  Accumulated reward per share with a 1e12 precision
+    function pools(uint256 poolId) external view returns (
+        IERC1155 lpToken,
+        uint256 tokenId,
+        uint256 allocPoint,
+        uint256 lastRewardBlock,
+        uint256 accRewardPerShare
+    );
+
+    /// @notice             Returns staking info of {poolId} for {user}
+    /// @param poolId       Id of the staking pool
+    /// @param user         Address of the user
+    /// @return amount      Amount of liquidity pool tokens staked by the user in this pool
+    /// @return rewardDebt  Pending reward for the user for this pool
+    function users(uint256 poolId, address user) external view returns (
+        uint256 amount,
+        uint256 rewardDebt
+    );
+
+    /// @notice  Returns the sum of all allocation points in all pools
+    /// @return  Amount of all allocation points in all poools
+    function totalAllocPoint() external view returns (uint256);
+
+    /// @notice  Returns the starting block of the staking
+    /// @return  Block number of the start of the staking
+    function startBlock() external view returns (uint256);
+
+    /// @notice  Returns the number of pools created
+    /// @return  Number of pools created
+    function poolLength() external view returns (uint256);
+
+    /// @notice  Returns the reward multiplier over the given from and to blocks
+    /// @return  Reward multiplier amount
+    function getMultiplier(
+        uint256 from,
+        uint256 to
+    ) external view returns (uint256);
+
+    /// @notice      Returns the pending reward of {user} for the staking pool {pid}
+    /// @param pid   Id of the staking pool
+    /// @param user  Address of the user
+    /// @return      Amount of pending reward
+    function pendingReward(
+        uint256 pid,
+        address user
+    ) external view returns (uint256);
 }
