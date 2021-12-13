@@ -2,6 +2,8 @@
 
 # Primitive Examples
 
+[![License](https://img.shields.io/badge/License-GPLv3-green.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 This repository contains examples showing how to interact with the Primitive Protocol's Automated Market Maker named "RMM-01".
 
 These example contracts are written for educational purposes and were **NOT AUDITED**. Keep this in mind before using them in production.
