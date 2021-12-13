@@ -19,4 +19,14 @@ The specifications of the `LiquidityWrapper` contract are extremely simple:
 - It allows users to deposit (wrap) liquidity pool tokens (ERC1155) to receive wrapped tokens (ERC20)
 - It allows users to withdraw (unwrap) wrapped liquidity pool tokens (ERC20) to get their unwrapped tokens back (ERC1155)
 
-See the [code here](contracts/liquidityWrapper/LiquidityWrapper.sol).
+See the code [here](contracts/liquidityWrapper/LiquidityWrapper.sol).
+
+### PrimitiveChef
+
+Based on the [MasterChef](https://github.com/sushiswap/sushiswap/blob/canary/contracts/MasterChef.sol) created by SushiSwap, this contract is a reimplementation of the code with the support of ERC1155 tokens, the token standard used by the PrimitiveManager.
+
+In a few words, the `PrimitiveChef` goals are to:
+- Allow the creation of staking pools
+- Reward users depositing liquidity pool tokens in these staking pools
+
+See the code [here](contracts/primitiveChef/PrimitiveChef.sol).
