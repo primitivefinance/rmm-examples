@@ -8,6 +8,7 @@ import "@primitivefi/rmm-manager/contracts/interfaces/IERC1155Permit.sol";
 import "@primitivefi/rmm-manager/contracts/base/Multicall.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "@primitivefi/rmm-manager/contracts/base/Reentrancy.sol";
 
 import "./IPrimitiveChef.sol";
 import "./RewardToken.sol";
@@ -16,7 +17,7 @@ import "./RewardToken.sol";
 /// @notice  Updated version of SushiSwap MasterChef contract to support Primitive liquidity tokens.
 ///          Along a couple of improvements, the biggest change is the support of ERC1155 instead of ERC20.
 /// @author  Primitive
-contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
+contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall, Reentrancy {
     using SafeERC20 for IERC20;
 
     /// STATE VARIABLES ///
@@ -153,7 +154,7 @@ contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
     }
 
     /// @inheritdoc IPrimitiveChef
-    function deposit(uint256 pid, uint256 amount) external override {
+    function deposit(uint256 pid, uint256 amount) external override lock {
         PoolInfo storage pool = pools[pid];
         UserInfo storage user = users[pid][msg.sender];
 
@@ -179,7 +180,7 @@ contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
     }
 
     /// @inheritdoc IPrimitiveChef
-    function withdraw(uint256 pid, uint256 amount) external override {
+    function withdraw(uint256 pid, uint256 amount) external override lock {
         PoolInfo storage pool = pools[pid];
         UserInfo storage user = users[pid][msg.sender];
 
@@ -206,7 +207,7 @@ contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
     }
 
     /// @inheritdoc IPrimitiveChef
-    function emergencyWithdraw(uint256 pid) external override {
+    function emergencyWithdraw(uint256 pid) external override lock {
         PoolInfo storage pool = pools[pid];
         UserInfo storage user = users[pid][msg.sender];
 
