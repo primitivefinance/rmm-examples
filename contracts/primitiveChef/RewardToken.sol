@@ -21,7 +21,7 @@ contract RewardToken is ERC20 {
         chef = chef_;
     }
 
-    function mint(address to, uint256 amount) external onlyChef() {
+    function mint(address to, uint256 amount) external onlyChef {
         _mint(to, amount);
     }
 }

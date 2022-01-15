@@ -8,6 +8,7 @@ import "@primitivefi/rmm-manager/contracts/interfaces/IERC1155Permit.sol";
 import "@primitivefi/rmm-manager/contracts/base/Multicall.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "@primitivefi/rmm-manager/contracts/base/Reentrancy.sol";
 
 import "./IPrimitiveChef.sol";
 import "./RewardToken.sol";
@@ -16,7 +17,13 @@ import "./RewardToken.sol";
 /// @notice  Updated version of SushiSwap MasterChef contract to support Primitive liquidity tokens.
 ///          Along a couple of improvements, the biggest change is the support of ERC1155 instead of ERC20.
 /// @author  Primitive
-contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
+contract PrimitiveChef is
+    IPrimitiveChef,
+    Ownable,
+    ERC1155Holder,
+    Multicall,
+    Reentrancy
+{
     using SafeERC20 for IERC20;
 
     /// STATE VARIABLES ///
@@ -82,7 +89,15 @@ contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
         bytes32 r,
         bytes32 s
     ) external override {
-        IERC1155Permit(lpToken).permit(owner, address(this), approved, deadline, v, r, s);
+        IERC1155Permit(lpToken).permit(
+            owner,
+            address(this),
+            approved,
+            deadline,
+            v,
+            r,
+            s
+        );
     }
 
     /// @inheritdoc IPrimitiveChef
@@ -91,10 +106,12 @@ contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
         IERC1155 lpToken,
         uint256 tokenId,
         bool withUpdate
-    ) external override onlyOwner() {
+    ) external override onlyOwner {
         if (withUpdate) massUpdatePools();
 
-        uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
+        uint256 lastRewardBlock = block.number > startBlock
+            ? block.number
+            : startBlock;
         totalAllocPoint += allocPoint;
 
         pools.push(
@@ -113,7 +130,7 @@ contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
         uint256 pid,
         uint256 allocPoint,
         bool withUpdate
-    ) external override onlyOwner() {
+    ) external override onlyOwner {
         if (withUpdate) massUpdatePools();
 
         totalAllocPoint -= pools[pid].allocPoint + allocPoint;
@@ -143,24 +160,27 @@ contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
         }
 
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-        uint256 reward = multiplier * rewardPerBlock * pool.allocPoint / totalAllocPoint;
+        uint256 reward = (multiplier * rewardPerBlock * pool.allocPoint) /
+            totalAllocPoint;
 
         rewardToken.mint(collector, reward / 10);
         rewardToken.mint(address(this), reward);
 
-        pool.accRewardPerShare += reward * 1e12 / lpSupply;
+        pool.accRewardPerShare += (reward * 1e12) / lpSupply;
         pool.lastRewardBlock = block.number;
     }
 
     /// @inheritdoc IPrimitiveChef
-    function deposit(uint256 pid, uint256 amount) external override {
+    function deposit(uint256 pid, uint256 amount) external override lock {
         PoolInfo storage pool = pools[pid];
         UserInfo storage user = users[pid][msg.sender];
 
         updatePool(pid);
 
         if (user.amount > 0) {
-            uint256 pending = user.amount * pool.accRewardPerShare / 1e12 - user.rewardDebt;
+            uint256 pending = (user.amount * pool.accRewardPerShare) /
+                1e12 -
+                user.rewardDebt;
             safeRewardTransfer(msg.sender, pending);
         }
 
@@ -173,13 +193,13 @@ contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
         );
 
         user.amount += amount;
-        user.rewardDebt = user.amount * pool.accRewardPerShare / 1e12;
+        user.rewardDebt = (user.amount * pool.accRewardPerShare) / 1e12;
 
         emit Deposit(msg.sender, pid, amount);
     }
 
     /// @inheritdoc IPrimitiveChef
-    function withdraw(uint256 pid, uint256 amount) external override {
+    function withdraw(uint256 pid, uint256 amount) external override lock {
         PoolInfo storage pool = pools[pid];
         UserInfo storage user = users[pid][msg.sender];
 
@@ -187,12 +207,14 @@ contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
 
         updatePool(pid);
 
-        uint256 pending = user.amount * pool.accRewardPerShare / 1e12 - user.rewardDebt;
+        uint256 pending = (user.amount * pool.accRewardPerShare) /
+            1e12 -
+            user.rewardDebt;
 
         safeRewardTransfer(msg.sender, pending);
 
         user.amount -= amount;
-        user.rewardDebt = user.amount * pool.accRewardPerShare / 1e12;
+        user.rewardDebt = (user.amount * pool.accRewardPerShare) / 1e12;
 
         pool.lpToken.safeTransferFrom(
             address(this),
@@ -206,7 +228,7 @@ contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
     }
 
     /// @inheritdoc IPrimitiveChef
-    function emergencyWithdraw(uint256 pid) external override {
+    function emergencyWithdraw(uint256 pid) external override lock {
         PoolInfo storage pool = pools[pid];
         UserInfo storage user = users[pid][msg.sender];
 
@@ -225,7 +247,7 @@ contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
     }
 
     /// @inheritdoc IPrimitiveChef
-    function setCollector(address newCollector) external onlyOwner() override {
+    function setCollector(address newCollector) external override onlyOwner {
         collector = newCollector;
     }
 
@@ -237,17 +259,24 @@ contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
     }
 
     /// @inheritdoc IPrimitiveChef
-    function getMultiplier(uint256 from, uint256 to) public view override returns (uint256) {
-        if (to <= bonusEndBlock) return to -  from * BONUS_MULTIPLIER;
+    function getMultiplier(uint256 from, uint256 to)
+        public
+        view
+        override
+        returns (uint256)
+    {
+        if (to <= bonusEndBlock) return to - from * BONUS_MULTIPLIER;
         if (from >= bonusEndBlock) return to - from;
         return bonusEndBlock - from * BONUS_MULTIPLIER + to - bonusEndBlock;
     }
 
     /// @inheritdoc IPrimitiveChef
-    function pendingReward(
-        uint256 pid,
-        address account
-    ) external view override returns (uint256) {
+    function pendingReward(uint256 pid, address account)
+        external
+        view
+        override
+        returns (uint256)
+    {
         PoolInfo storage pool = pools[pid];
         UserInfo storage user = users[pid][account];
 
@@ -255,12 +284,17 @@ contract PrimitiveChef is IPrimitiveChef, Ownable, ERC1155Holder, Multicall {
         uint256 lpSupply = pool.lpToken.balanceOf(address(this), pool.tokenId);
 
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
-            uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
-            uint256 sushiReward = multiplier * rewardPerBlock * pool.allocPoint / totalAllocPoint;
-            accRewardPerShare += sushiReward * 1e12 / lpSupply;
+            uint256 multiplier = getMultiplier(
+                pool.lastRewardBlock,
+                block.number
+            );
+            uint256 sushiReward = (multiplier *
+                rewardPerBlock *
+                pool.allocPoint) / totalAllocPoint;
+            accRewardPerShare += (sushiReward * 1e12) / lpSupply;
         }
 
-        return user.amount * accRewardPerShare / 1e12 - user.rewardDebt;
+        return (user.amount * accRewardPerShare) / 1e12 - user.rewardDebt;
     }
 
     /// INTERNAL FUNCTIONS ///

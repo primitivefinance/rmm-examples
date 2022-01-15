@@ -163,23 +163,26 @@ interface IPrimitiveChef is IMulticall {
     /// @return allocPoint        Allocation points assigned to this pool
     /// @return lastRewardBlock    Last block number with a reward distribution
     /// @return accRewardPerShare  Accumulated reward per share with a 1e12 precision
-    function pools(uint256 poolId) external view returns (
-        IERC1155 lpToken,
-        uint256 tokenId,
-        uint256 allocPoint,
-        uint256 lastRewardBlock,
-        uint256 accRewardPerShare
-    );
+    function pools(uint256 poolId)
+        external
+        view
+        returns (
+            IERC1155 lpToken,
+            uint256 tokenId,
+            uint256 allocPoint,
+            uint256 lastRewardBlock,
+            uint256 accRewardPerShare
+        );
 
     /// @notice             Returns staking info of {poolId} for {user}
     /// @param poolId       Id of the staking pool
     /// @param user         Address of the user
     /// @return amount      Amount of liquidity pool tokens staked by the user in this pool
     /// @return rewardDebt  Pending reward for the user for this pool
-    function users(uint256 poolId, address user) external view returns (
-        uint256 amount,
-        uint256 rewardDebt
-    );
+    function users(uint256 poolId, address user)
+        external
+        view
+        returns (uint256 amount, uint256 rewardDebt);
 
     /// @notice  Returns the sum of all allocation points in all pools
     /// @return  Amount of all allocation points in all poools
@@ -195,17 +198,17 @@ interface IPrimitiveChef is IMulticall {
 
     /// @notice  Returns the reward multiplier over the given from and to blocks
     /// @return  Reward multiplier amount
-    function getMultiplier(
-        uint256 from,
-        uint256 to
-    ) external view returns (uint256);
+    function getMultiplier(uint256 from, uint256 to)
+        external
+        view
+        returns (uint256);
 
     /// @notice      Returns the pending reward of {user} for the staking pool {pid}
     /// @param pid   Id of the staking pool
     /// @param user  Address of the user
     /// @return      Amount of pending reward
-    function pendingReward(
-        uint256 pid,
-        address user
-    ) external view returns (uint256);
+    function pendingReward(uint256 pid, address user)
+        external
+        view
+        returns (uint256);
 }
