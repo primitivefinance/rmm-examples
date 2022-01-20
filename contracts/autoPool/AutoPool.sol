@@ -11,19 +11,13 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "./IAutoPool.sol";
 
 contract AutoPool is IAutoPool, Ownable, ERC1155Holder, Multicall {
-    struct UserInfo {
-        uint256 amount;
-        uint256 lastCumulatedRateIndex;
-    }
-
-    mapping(address => UserInfo) public userInfoOf;
+    mapping(address => UserInfo) public override userInfoOf;
 
     address public immutable manager;
     address public immutable engine;
 
     uint256 public immutable PRECISION = 10 ** 18;
     uint256[] public cumulatedRates;
-    uint256 public totalBalance;
     uint256 public currentPoolId;
 
     bytes private _empty;
