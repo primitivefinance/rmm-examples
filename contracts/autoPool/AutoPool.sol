@@ -13,12 +13,11 @@ import "./IAutoPool.sol";
 contract AutoPool is IAutoPool, Ownable, ERC1155Holder, Multicall {
     mapping(address => UserInfo) public override userInfoOf;
 
-    address public immutable manager;
-    address public immutable engine;
-
-    uint256 public immutable PRECISION = 10 ** 18;
-    uint256[] public cumulatedRates;
-    uint256 public currentPoolId;
+    address public immutable override manager;
+    address public immutable override engine;
+    uint256 public immutable override PRECISION = 10 ** 18;
+    uint256[] public override cumulatedRates;
+    uint256 public override currentPoolId;
 
     bytes private _empty;
 
@@ -46,7 +45,7 @@ contract AutoPool is IAutoPool, Ownable, ERC1155Holder, Multicall {
         cumulatedRates.push(1 * 10 ** 18);
     }
 
-    function deposit(uint256 amount) external updateUserInfo() {
+    function deposit(uint256 amount) external updateUserInfo() override {
         IERC1155(manager).safeTransferFrom(
             msg.sender,
             address(this),
@@ -60,7 +59,7 @@ contract AutoPool is IAutoPool, Ownable, ERC1155Holder, Multicall {
         emit Deposit(msg.sender, currentPoolId, amount);
     }
 
-    function withdraw(uint256 amount) external updateUserInfo() {
+    function withdraw(uint256 amount) external updateUserInfo() override {
         IERC1155(manager).safeTransferFrom(
             msg.sender,
             address(this),
@@ -79,7 +78,7 @@ contract AutoPool is IAutoPool, Ownable, ERC1155Holder, Multicall {
         uint256 minStableOut,
         uint256 newPoolId,
         uint256 minLiquidityOut
-    ) external onlyOwner() {
+    ) external onlyOwner() override {
         uint256 previousdelLiquidity = IERC1155(manager).balanceOf(address(this), currentPoolId);
 
         (uint256 delRisky, uint256 delStable) = IPrimitiveManager(manager).remove(
@@ -106,7 +105,7 @@ contract AutoPool is IAutoPool, Ownable, ERC1155Holder, Multicall {
         currentPoolId = newPoolId;
     }
 
-    function balanceOf(address account) external view returns (uint256) {
+    function balanceOf(address account) external view override returns (uint256) {
         uint256 amount = userInfoOf[account].amount
             * cumulatedRates[cumulatedRates.length - 1]
             / cumulatedRates[userInfoOf[account].lastCumulatedRateIndex];
