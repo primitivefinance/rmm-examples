@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.1.0",
-    "@primitivefi/rmm-manager": "^2.0.0-beta.1"
+    "@primitivefi/rmm-manager": "^2.0.0-beta.5"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
