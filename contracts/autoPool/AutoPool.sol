@@ -10,15 +10,30 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
 import "./IAutoPool.sol";
 
+/// @title    AutoPool contract
+/// @author   Primitive
+/// @notice   Allows liquidity providers to have their LP tokens automatically moved to a new pool after the expiration of the
+///           current one.
 contract AutoPool is IAutoPool, Ownable, ERC1155Holder, Multicall {
+    /// @inheritdoc IAutoPool
     mapping(address => UserInfo) public override userInfoOf;
 
+    /// @inheritdoc IAutoPool
     address public immutable override manager;
+
+    /// @inheritdoc IAutoPool
     address public immutable override engine;
+
+    /// @inheritdoc IAutoPool
     uint256 public immutable override PRECISION = 10 ** 18;
+
+    /// @inheritdoc IAutoPool
     uint256[] public override cumulatedRates;
+
+    /// @inheritdoc IAutoPool
     uint256 public override currentPoolId;
 
+    /// @dev Empty bytes to pass along ERC1155 transfers
     bytes private _empty;
 
     modifier updateUserInfo() {
