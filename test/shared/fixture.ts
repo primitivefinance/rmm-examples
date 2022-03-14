@@ -29,8 +29,8 @@ export async function fixture([deployer, alice], provider) {
 
   const primitiveEngine = await ethers.getContractAt(PrimitiveEngineArtifact.abi, engineAddress, deployer);
 
-  await risky.mint(alice, utils.parseEther('1000'));
-  await stable.mint(alice, utils.parseEther('1000'));
+  await risky.mint(alice.address, utils.parseEther('1000'));
+  await stable.mint(alice.address, utils.parseEther('1000'));
 
   return {
    primitiveFactory,
