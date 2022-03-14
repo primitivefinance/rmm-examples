@@ -1,11 +1,12 @@
 import { ethers } from 'hardhat';
+import { utils } from 'ethers';
 
 import PrimitiveFactoryArtifact from '@primitivefi/rmm-core/artifacts/contracts/PrimitiveFactory.sol/PrimitiveFactory.json';
 import PrimitiveEngineArtifact from '@primitivefi/rmm-core/artifacts/contracts/PrimitiveEngine.sol/PrimitiveEngine.json';
 
 import { computeEngineAddress } from './utils';
 
-export async function fixture([deployer], provider) {
+export async function fixture([deployer, alice], provider) {
   const PrimitiveFactory = await ethers.getContractFactory(
     PrimitiveFactoryArtifact.abi,
     PrimitiveFactoryArtifact.bytecode,
@@ -27,6 +28,9 @@ export async function fixture([deployer], provider) {
   )
 
   const primitiveEngine = await ethers.getContractAt(PrimitiveEngineArtifact.abi, engineAddress, deployer);
+
+  await risky.mint(alice, utils.parseEther('1000'));
+  await stable.mint(alice, utils.parseEther('1000'));
 
   return {
    primitiveFactory,
