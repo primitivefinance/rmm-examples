@@ -3,6 +3,7 @@ import { utils } from 'ethers';
 
 import PrimitiveFactoryArtifact from '@primitivefi/rmm-core/artifacts/contracts/PrimitiveFactory.sol/PrimitiveFactory.json';
 import PrimitiveEngineArtifact from '@primitivefi/rmm-core/artifacts/contracts/PrimitiveEngine.sol/PrimitiveEngine.json';
+import PrimitiveManagerArtifact from '@primitivefi/rmm-manager/artifacts/contracts/PrimitiveManager.sol/PrimitiveManager.json';
 
 import { computeEngineAddress } from './utils';
 
@@ -32,9 +33,26 @@ export async function fixture([deployer, alice], provider) {
   await risky.mint(alice.address, utils.parseEther('1000'));
   await stable.mint(alice.address, utils.parseEther('1000'));
 
+  const Weth = await ethers.getContractFactory('WETH9', deployer);
+  const weth = await Weth.deploy();
+
+  const PrimitiveManager = await ethers.getContractFactory(
+    PrimitiveManagerArtifact.abi,
+    PrimitiveManagerArtifact.bytecode,
+    deployer
+  );
+
+  const primitiveManager = await PrimitiveManager.deploy(
+    primitiveFactory.address,
+    weth.address,
+    ethers.constants.AddressZero,
+  );
+
   return {
    primitiveFactory,
    primitiveEngine,
+   primitiveManager,
+   weth,
    risky,
    stable,
   };
