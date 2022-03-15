@@ -1,4 +1,8 @@
-import { utils } from 'ethers'
+import {
+  utils,
+  BigNumberish,
+} from 'ethers'
+
 const { keccak256, solidityPack } = utils
 
 /**
@@ -14,7 +18,7 @@ const { keccak256, solidityPack } = utils
  *
  * @beta
  */
-export function computePoolId(engine: string, strike: string, sigma: string, maturity: string, gamma: string): string {
+export function computePoolId(engine: string, strike: BigNumberish, sigma: BigNumberish, maturity: BigNumberish, gamma: BigNumberish): string {
   return keccak256(
     solidityPack(['address', 'uint128', 'uint32', 'uint32', 'uint32'], [engine, strike, sigma, maturity, gamma])
   )
