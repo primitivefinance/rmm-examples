@@ -8,6 +8,9 @@ const config: HardhatUserConfig = {
     hardhat: {
       allowUnlimitedContractSize: true,
     },
+    ganache: {
+      url: 'http://127.0.0.1:8545',
+    }
   },
   solidity: {
     version: '0.8.6',
