@@ -1,18 +1,19 @@
-import { Wallet, Contract } from 'ethers';
+import { Contract } from 'ethers';
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
 export interface Contracts {
   primitiveFactory: Contract;
   primitiveEngine: Contract;
   primitiveManager: Contract;
-  risky: Contract;
-  stable: Contract;
   weth: Contract;
+  stable: Contract;
+  risky: Contract;
 }
 
 export interface Wallets {
-  deployer: Wallet;
-  alice: Wallet;
-  bob: Wallet;
+  deployer: SignerWithAddress;
+  alice: SignerWithAddress;
+  bob: SignerWithAddress;
 }
 
 declare module 'mocha' {
