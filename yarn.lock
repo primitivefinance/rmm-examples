@@ -564,6 +564,14 @@
     "@primitivefi/rmm-core" "^1.0.0"
     base64-sol "^1.1.0"
 
+"@primitivefi/rmm-math@^2.0.0-beta.3":
+  version "2.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@primitivefi/rmm-math/-/rmm-math-2.0.0-beta.3.tgz#07427901672105ee5b462fe9746b55590747fc38"
+  integrity sha512-zyZHNQHwM1GOzmNWWPwvndq/xOSqQKRMXmmaVljxJPJqpdzliLB2O074dYttwMX1972csn0ZfsWQk+hiDo67Cw==
+  dependencies:
+    gaussian "^1.2.0"
+    numeric "^1.2.6"
+
 "@resolver-engine/core@^0.3.3":
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/@resolver-engine/core/-/core-0.3.3.tgz#590f77d85d45bc7ecc4e06c654f41345db6ca967"
@@ -3693,6 +3701,11 @@ ganache-core@^2.13.2:
     ethereumjs-wallet "0.6.5"
     web3 "1.2.11"
 
+gaussian@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/gaussian/-/gaussian-1.2.0.tgz#5b081744008c1b0a8eb510da695ed7328fb8913a"
+  integrity sha512-Pz/InFmDZ6VqCbXF+2+O6USIbPUPWhJ7DnqrZKfo9mMHszCd4pBad3WCVa9ruzzrBizYonsv0ZBmuv4rR8NRQg==
+
 get-caller-file@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-1.0.3.tgz#f978fa4c90d1dfe7ff2d6beda2a515e713bdcf4a"
@@ -5519,6 +5532,11 @@ number-to-bn@1.7.0:
   dependencies:
     bn.js "4.11.6"
     strip-hex-prefix "1.0.0"
+
+numeric@^1.2.6:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/numeric/-/numeric-1.2.6.tgz#765b02bef97988fcf880d4eb3f36b80fa31335aa"
+  integrity sha1-dlsCvvl5iPz4gNTrPza4D6MTNao=
 
 oauth-sign@~0.9.0:
   version "0.9.0"
