@@ -6,11 +6,9 @@ import { HardhatUserConfig } from 'hardhat/config'
 const config: HardhatUserConfig = {
   networks: {
     hardhat: {
-      blockGasLimit: 30000000,
+      blockGasLimit: 18e6,
+      gas: 12e6,
     },
-    ganache: {
-      url: 'http://127.0.0.1:8545',
-    }
   },
   solidity: {
     version: '0.8.6',
