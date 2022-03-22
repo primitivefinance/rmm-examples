@@ -4,8 +4,9 @@ pragma solidity 0.8.6;
 import "@primitivefi/rmm-core/contracts/interfaces/IPrimitiveEngine.sol";
 import "@primitivefi/rmm-manager/contracts/interfaces/IPrimitiveManager.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
-contract LiquidityExample {
+contract LiquidityExample is ERC1155Holder {
     address public manager;
     address public risky;
     address public stable;
@@ -31,10 +32,9 @@ contract LiquidityExample {
         uint256 delStable,
         uint256 minLiquidityOut
     ) external {
-        // IERC20(risky).transferFrom(msg.sender, address(this), delRisky);
-        // IERC20(stable).transferFrom(msg.sender, address(this), delStable);
+        IERC20(risky).transferFrom(msg.sender, address(this), delRisky);
+        IERC20(stable).transferFrom(msg.sender, address(this), delStable);
 
-    /*
         uint256 delLiquidity = IPrimitiveManager(manager).allocate(
             address(this),
             poolId,
@@ -45,9 +45,8 @@ contract LiquidityExample {
             false,
             minLiquidityOut
         );
-        */
 
-        // liquidityOf[msg.sender] += delLiquidity;
+        liquidityOf[msg.sender] += delLiquidity;
 
         // sweep(risky, msg.sender);
         // sweep(stable, msg.sender);
