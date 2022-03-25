@@ -50,5 +50,33 @@ runTest('LiquidityExample', function () {
         await liquidityExample.liquidityOf(this.wallets.deployer.address)
       ).to.be.equal(delLiquidity);
     });
+
+    it('allocates and removes', async function () {
+      await this.contracts.risky.approve(
+        liquidityExample.address,
+        constants.MaxUint256,
+      );
+
+      await this.contracts.stable.approve(
+        liquidityExample.address,
+        constants.MaxUint256,
+      );
+
+      const delLiquidity = parseWei(1).raw;
+      const res = await this.contracts.primitiveEngine.reserves(poolId)
+      const delRisky = delLiquidity.mul(res.reserveRisky).div(res.liquidity)
+      const delStable = delLiquidity.mul(res.reserveStable).div(res.liquidity)
+
+      await liquidityExample.allocate(
+        poolId,
+        delRisky,
+        delStable,
+        delLiquidity,
+      );
+
+      expect(
+        await liquidityExample.liquidityOf(this.wallets.deployer.address)
+      ).to.be.equal(delLiquidity);
+    });
   })
 });
