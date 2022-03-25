@@ -48,8 +48,11 @@ contract LiquidityExample is ERC1155Holder {
 
         liquidityOf[msg.sender] += delLiquidity;
 
-        // sweep(risky, msg.sender);
-        // sweep(stable, msg.sender);
+        uint256 dust = IERC20(risky).balanceOf(address(this));
+        if (dust != 0) IERC20(risky).transfer(msg.sender, dust);
+
+        dust = IERC20(stable).balanceOf(address(this));
+        if (dust != 0) IERC20(stable).transfer(msg.sender, dust);
     }
 
     function remove(
@@ -66,14 +69,7 @@ contract LiquidityExample is ERC1155Holder {
             uint256 delStable
         ) = IPrimitiveManager(manager).remove(engine, poolId, delLiquidity, minRiskyOut, minStableOut);
 
-        sweep(IPrimitiveEngine(engine).risky(), msg.sender);
-        sweep(IPrimitiveEngine(engine).stable(), msg.sender);
-    }
-
-    function sweep(address token, address to) internal {
-        IERC20(token).transfer(
-            to,
-            IERC20(token).balanceOf(address(this))
-        );
+        if (delRisky != 0) IERC20(risky).transfer(msg.sender, delRisky);
+        if (delStable != 0) IERC20(stable).transfer(msg.sender, delStable);
     }
 }
