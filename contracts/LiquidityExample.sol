@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.6;
 
-import "@primitivefi/rmm-core/contracts/interfaces/IPrimitiveEngine.sol";
 import "@primitivefi/rmm-manager/contracts/interfaces/IPrimitiveManager.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
