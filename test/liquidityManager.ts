@@ -6,14 +6,14 @@ import { runTest } from './shared/fixture'
 import expect from './shared/expect';
 import { DEFAULT_CALIBRATION } from './shared/config';
 
-let liquidityExample: Contract;
+let liquidityManager: Contract;
 let poolId: string;
 
-runTest('LiquidityExample', function () {
+runTest('LiquidityManager', function () {
   beforeEach(async function () {
-    const LiquidityExample = await hre.ethers.getContractFactory('LiquidityExample');
+    const LiquidityManager = await hre.ethers.getContractFactory('LiquidityManager');
 
-    liquidityExample = await LiquidityExample.deploy(
+    liquidityManager = await LiquidityManager.deploy(
       this.contracts.primitiveManager.address,
       this.contracts.risky.address,
       this.contracts.stable.address,
@@ -25,12 +25,12 @@ runTest('LiquidityExample', function () {
   describe('success cases', function () {
     it('allocates risky and stable into a pool', async function () {
       await this.contracts.risky.approve(
-        liquidityExample.address,
+        liquidityManager.address,
         constants.MaxUint256,
       );
 
       await this.contracts.stable.approve(
-        liquidityExample.address,
+        liquidityManager.address,
         constants.MaxUint256,
       );
 
@@ -39,7 +39,7 @@ runTest('LiquidityExample', function () {
       const delRisky = delLiquidity.mul(res.reserveRisky).div(res.liquidity)
       const delStable = delLiquidity.mul(res.reserveStable).div(res.liquidity)
 
-      await liquidityExample.allocate(
+      await liquidityManager.allocate(
         poolId,
         delRisky,
         delStable,
@@ -47,18 +47,18 @@ runTest('LiquidityExample', function () {
       );
 
       expect(
-        await liquidityExample.liquidityOf(this.wallets.deployer.address)
+        await liquidityManager.liquidityOf(this.wallets.deployer.address)
       ).to.be.equal(delLiquidity);
     });
 
     it('allocates and removes', async function () {
       await this.contracts.risky.approve(
-        liquidityExample.address,
+        liquidityManager.address,
         constants.MaxUint256,
       );
 
       await this.contracts.stable.approve(
-        liquidityExample.address,
+        liquidityManager.address,
         constants.MaxUint256,
       );
 
@@ -67,7 +67,7 @@ runTest('LiquidityExample', function () {
       const delRisky = delLiquidity.mul(res.reserveRisky).div(res.liquidity)
       const delStable = delLiquidity.mul(res.reserveStable).div(res.liquidity)
 
-      await liquidityExample.allocate(
+      await liquidityManager.allocate(
         poolId,
         delRisky,
         delStable,
@@ -75,7 +75,7 @@ runTest('LiquidityExample', function () {
       );
 
       expect(
-        await liquidityExample.liquidityOf(this.wallets.deployer.address)
+        await liquidityManager.liquidityOf(this.wallets.deployer.address)
       ).to.be.equal(delLiquidity);
     });
   })

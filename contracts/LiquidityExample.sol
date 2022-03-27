@@ -5,7 +5,7 @@ import "@primitivefi/rmm-manager/contracts/interfaces/IPrimitiveManager.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
-contract LiquidityExample is ERC1155Holder {
+contract LiquidityManager is ERC1155Holder {
     address public manager;
     address public risky;
     address public stable;
