@@ -10,6 +10,51 @@ These example contracts are written for educational purposes and were **NOT AUDI
 
 Alternatively, you can use this repository as a base if you plan on building on top of the RMM protocol, as it contains all the necessary setup to run the whole protocol locally.
 
+## Usage
+
+Clone the repository on your computer:
+
+```bash
+git clone https://github.com/primitivefinance/rmm-examples.git
+```
+
+Then install the required dependencies:
+
+```bash
+# Using npm
+npm install
+
+# Using yarn
+yarn
+```
+
+After that, you can try the other commands:
+
+```bash
+# Using npm and npx
+
+# Compile the contracts
+npm run compile
+
+# Run a test
+npx hardhat test ./path/to/the/test.ts
+
+# Style the contracts using Prettier
+npm run prettier
+
+
+# Using yarn
+
+# Compile the contracts
+yarn compile
+
+# Run a test
+yarn hardhat test ./path/to/the/test.ts
+
+# Style the contracts using Prettier
+yarn prettier
+```
+
 ## Example Contracts
 
 ### LiquidityManager
@@ -49,4 +94,4 @@ As mentioned above, if you plan on building on top of the Primitive RMM protocol
 - A local context deploying a complete version of the protocol (PrimitiveFactory, PrimitiveEngine, PrimitiveManager and test ERC20 tokens)
 - Custom Mocha hooks specific to the RMM protocol
 
-Feel free to remove the examples or any files you don't want to keep and make yourself at home!
+Feel free to remove the examples or any files you don't want to keep to make yourself at home!
