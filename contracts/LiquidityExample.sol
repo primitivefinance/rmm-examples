@@ -63,10 +63,8 @@ contract LiquidityManager is ERC1155Holder {
     ) external {
         liquidityOf[msg.sender] -= delLiquidity;
 
-        (
-            uint256 delRisky,
-            uint256 delStable
-        ) = IPrimitiveManager(manager).remove(engine, poolId, delLiquidity, minRiskyOut, minStableOut);
+        (uint256 delRisky, uint256 delStable) = IPrimitiveManager(manager)
+            .remove(engine, poolId, delLiquidity, minRiskyOut, minStableOut);
 
         if (delRisky != 0) IERC20(risky).transfer(msg.sender, delRisky);
         if (delStable != 0) IERC20(stable).transfer(msg.sender, delStable);
