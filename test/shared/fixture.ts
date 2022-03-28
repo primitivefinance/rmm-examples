@@ -11,13 +11,11 @@ import { computeEngineAddress } from './utils';
 import { DEFAULT_CALIBRATION } from './config';
 
 export function runTest(description: string, runTests: Function): void {
-  const loadFixture = createFixtureLoader();
-
   describe(description, function () {
     beforeEach(async function () {
       const wallets = await hre.ethers.getSigners();
-
       const [deployer, alice, bob] = wallets;
+      const loadFixture = createFixtureLoader(wallets as unknown as Wallet[]);
       const loadedFixture = await loadFixture(fixture);
 
       this.contracts = {
@@ -53,6 +51,7 @@ export async function fixture([deployer]: Wallet[], provider: MockProvider) {
   const stable = await TestERC20.deploy();
 
   await primitiveFactory.deploy(risky.address, stable.address);
+
 
   const engineAddress = computeEngineAddress(
     primitiveFactory.address,

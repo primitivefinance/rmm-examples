@@ -29,8 +29,8 @@
     "web3-units": "^1.4.0"
   },
   "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "^2.0.2",
-    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@nomiclabs/hardhat-ethers": "^2.0.5",
+    "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@typechain/ethers-v5": "^7.1.0",
     "@typechain/hardhat": "^2.2.0",
     "@types/chai": "^4.2.21",
@@ -38,8 +38,8 @@
     "@types/node": "^16.9.4",
     "chai": "^4.3.4",
     "ethereum-waffle": "^3.4.0",
-    "ethers": "^5.4.1",
-    "hardhat": "^2.4.3",
+    "ethers": "^5.6.1",
+    "hardhat": "^2.9.1",
     "prettier": "^2.5.1",
     "prettier-plugin-solidity": "^1.0.0-beta.19",
     "ts-generator": "^0.1.1",
