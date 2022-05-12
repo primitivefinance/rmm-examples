@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.8.6;
 
-/// @title    LiquidityManager Interface
-/// @notice   Interface of the LiquidityManager contract
+/// @title    Liquidity Manager Interface
+/// @notice   Shows how a contract can allocate and remove liquidity from RMM pools
+///           on behalf of users. This example focuses on interacting with a unique
+///           PrimitiveManager contract and only allows the deposit of a specific
+///           risky / stable pair
 /// @author   Primitive
 interface ILiquidityManager {
     /// EFFECT FUNCTIONS ///
@@ -22,7 +25,7 @@ interface ILiquidityManager {
     ) external;
 
     /// @notice                Removes risky and stable tokens from a pool and sends
-    ///                        them into the sender's wallet
+    ///                        them to the sender's wallet
     /// @param engine          Address of the PrimitiveEngine contract specific to the
     ///                        risky / stable pair
     /// @param poolId          Id of the pool to remove the liquidity tokens from

@@ -14,7 +14,7 @@ import "./ILiquidityManager.sol";
 ///           risky / stable pair
 /// @author   Primitive
 contract LiquidityManager is ILiquidityManager, ERC1155Holder {
-    /// STATE VARIABLES ///
+    /// STORAGE VARIABLES ///
 
     /// @inheritdoc ILiquidityManager
     address public manager;
