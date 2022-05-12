@@ -9,15 +9,18 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
 import "./ILiquidityWrapper.sol";
 
-/// @title   Liquidity Pool Tokens Wrapper contract
-/// @notice  Wraps PrimitiveManager liquidity pool tokens (ERC1155) into ERC20 tokens
-/// @author  Primitive
+/// @title    Liquidity Wrapper contract
+/// @notice   Allows users to wrap specific PrimitiveManager liquidity pool tokens
+///           (ERC1155) into ERC20 tokens
+/// @author   Primitive
 contract LiquidityWrapper is
     ILiquidityWrapper,
     ERC20,
     ERC1155Holder,
     Multicall
 {
+    /// STORAGE VARIABLES ///
+
     /// @inheritdoc ILiquidityWrapper
     address public override manager;
 
@@ -25,12 +28,14 @@ contract LiquidityWrapper is
     uint256 public override poolId;
 
     /// @dev Null variable to pass to `safeTransferFrom`
-    bytes private data;
+    bytes private empty;
 
-    /// @param name_     Name of the wrapped token
-    /// @param symbol_   Symbol of the wrapped token
-    /// @param manager_  Address of the PrimitiveManager associated with this wrapper
-    /// @param poolId_   Id of the PrimitiveManager pool associated with this wrapper
+    /// EFFECT FUNCTIONS ///
+
+    /// @param name_      Name of the wrapped token
+    /// @param symbol_    Symbol of the wrapped token
+    /// @param manager_   Address of the PrimitiveManager associated with this wrapper
+    /// @param poolId_    Id of the PrimitiveManager liquidity pool token associated with this wrapper
     constructor(
         string memory name_,
         string memory symbol_,
@@ -68,7 +73,7 @@ contract LiquidityWrapper is
             address(this),
             poolId,
             amount,
-            data
+            empty
         );
         _mint(to, amount);
         emit Wrap(msg.sender, to, amount);
@@ -82,7 +87,7 @@ contract LiquidityWrapper is
             to,
             poolId,
             amount,
-            data
+            empty
         );
         emit Unwrap(msg.sender, to, amount);
     }
