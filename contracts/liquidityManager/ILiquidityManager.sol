@@ -10,13 +10,13 @@ pragma solidity >=0.8.6;
 interface ILiquidityManager {
     /// EFFECT FUNCTIONS ///
 
-    /// @notice                   Allocates risky and stable tokens from the
-    ///                           sender's wallet into a pool
-    /// @param poolId             Id of the pool to allocate the tokens into
-    /// @param delRisky           Amount of risky tokens to allocate into the pool
-    /// @param delStable          Amount of stable tokens to allocate into the pool
-    /// @param minLiquidityOut    Minimum amount of liquidity pool tokens expected
-    ///                           to be received after the allocation
+    /// @notice                  Allocates risky and stable tokens from the
+    ///                          sender's wallet into a pool
+    /// @param poolId            Id of the pool to allocate the tokens into
+    /// @param delRisky          Amount of risky tokens to allocate into the pool
+    /// @param delStable         Amount of stable tokens to allocate into the pool
+    /// @param minLiquidityOut   Minimum amount of liquidity pool tokens expected
+    ///                          to be received after the allocation
     function allocate(
         bytes32 poolId,
         uint256 delRisky,
@@ -24,16 +24,16 @@ interface ILiquidityManager {
         uint256 minLiquidityOut
     ) external;
 
-    /// @notice                Removes risky and stable tokens from a pool and sends
-    ///                        them to the sender's wallet
-    /// @param engine          Address of the PrimitiveEngine contract specific to the
-    ///                        risky / stable pair
-    /// @param poolId          Id of the pool to remove the liquidity tokens from
-    /// @param delLiquidity    Amount of liquidity pool tokens to remove
-    /// @param minRiskyOut     Minimum amount of risky tokens expected to be received
-    ///                        after the removal
-    /// @param minStableOut    Minimum amount of stable tokens expected to be received
-    ///                        after the removal
+    /// @notice               Removes risky and stable tokens from a pool and sends
+    ///                       them to the sender's wallet
+    /// @param engine         Address of the PrimitiveEngine contract specific to the
+    ///                       risky / stable pair
+    /// @param poolId         Id of the pool to remove the liquidity tokens from
+    /// @param delLiquidity   Amount of liquidity pool tokens to remove
+    /// @param minRiskyOut    Minimum amount of risky tokens expected to be received
+    ///                       after the removal
+    /// @param minStableOut   Minimum amount of stable tokens expected to be received
+    ///                       after the removal
     function remove(
         address engine,
         bytes32 poolId,
