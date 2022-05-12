@@ -28,6 +28,8 @@ contract LiquidityManager is ILiquidityManager, ERC1155Holder {
     /// @inheritdoc ILiquidityManager
     mapping(address => uint256) public liquidityOf;
 
+    /// EFFECT FUNCTIONS ///
+
     /// @param manager_    Address of the PrimitiveManager contract that this contract
     ///                    will interfact with
     /// @param risky_      Address of the risky token contract of the risky / stable pair

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity >=0.8.6;
 
+/// @title    LiquidityManager Interface
+/// @notice   Interface of the LiquidityManager contract
+/// @author   Primitive
 interface ILiquidityManager {
     /// EFFECT FUNCTIONS ///
 
