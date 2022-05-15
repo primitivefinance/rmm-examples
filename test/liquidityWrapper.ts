@@ -2,9 +2,10 @@ import hre, { ethers } from 'hardhat';
 import { Contract } from 'ethers';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
-import expect from './utils/expect';
+import expect from './shared/expect';
+import { getERC1155PermitSignature } from './shared/permit';
+
 import { TestERC1155Permit, LiquidityWrapper } from '../typechain';
-import { getERC1155PermitSignature } from './utils/permit';
 
 let lpToken: TestERC1155Permit;
 let wrappedLpToken: LiquidityWrapper;

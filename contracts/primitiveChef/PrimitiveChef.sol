@@ -13,10 +13,10 @@ import "@primitivefi/rmm-manager/contracts/base/Reentrancy.sol";
 import "./IPrimitiveChef.sol";
 import "./RewardToken.sol";
 
-/// @title   PrimitiveChef contract
-/// @notice  Updated version of SushiSwap MasterChef contract to support Primitive liquidity tokens.
-///          Along a couple of improvements, the biggest change is the support of ERC1155 instead of ERC20.
-/// @author  Primitive
+/// @title    PrimitiveChef contract
+/// @notice   Updated version of SushiSwap MasterChef contract to support Primitive liquidity tokens.
+///           Along a couple of improvements, the biggest change is the support of ERC1155 instead of ERC20.
+/// @author   Primitive
 contract PrimitiveChef is
     IPrimitiveChef,
     Ownable,
