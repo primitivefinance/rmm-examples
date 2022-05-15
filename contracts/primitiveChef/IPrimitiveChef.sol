@@ -11,8 +11,10 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
 import "./RewardToken.sol";
 
-/// @title   Interface of the PrimitiveChef contract
-/// @author  Primitive
+/// @title    PrimitiveChef Interface
+/// @notice   Updated version of SushiSwap MasterChef contract to support Primitive liquidity tokens.
+///           Along a couple of improvements, the biggest change is the support of ERC1155 instead of ERC20.
+/// @author   Primitive
 interface IPrimitiveChef is IMulticall {
     /// STRUCTS ///
 
