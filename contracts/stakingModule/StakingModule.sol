@@ -4,7 +4,7 @@ pragma solidity 0.8.13;
 contract StakingModule {
     struct User {
         uint256 balance;
-        uint256 claimed;
+        uint256 claimedAt;
     }
 
     struct Pool {
@@ -19,6 +19,7 @@ contract StakingModule {
     Pool[] public pools;
     mapping(address => mapping(uint256 => User)) public users;
 
+    address public immutable rewardToken;
     uint256 public PRECISION = 10 ** 12;
 
     modifier calibrate(uint256 poolId) {
@@ -31,6 +32,10 @@ contract StakingModule {
 
         pool.lastUpdateAtBlock = block.number;
         _;
+    }
+
+    constructor(address _rewardToken) {
+        rewardToken = _rewardToken;
     }
 
     function create(
@@ -51,15 +56,32 @@ contract StakingModule {
     function deposit(uint256 poolId, uint256 amount) calibrate(poolId) external {
         pools[poolId].balance += amount;
         users[msg.sender][poolId].balance += amount;
-        users[msg.sender][poolId].claimed = pools[poolId].accumulatedRewardPerShare;
+        users[msg.sender][poolId].claimedAt = pools[poolId].accumulatedRewardPerShare;
     }
 
-    function pending(address sir, uint256 poolId) external view returns (uint256) {
+    function withdraw(uint256 poolId, uint256 amount) calibrate(poolId) external {
+        claim(poolId);
+        users[msg.sender][poolId].claimedAt = pools[poolId].accumulatedRewardPerShare;
+        pools[poolId].balance -= amount;
+        users[msg.sender][poolId].balance -= amount;
+    }
+
+    function claim(uint256 poolId) calibrate(poolId) public {
+        uint256 amount = pending(msg.sender, poolId);
+        users[msg.sender][poolId].claimedAt = pools[poolId].accumulatedRewardPerShare;
+        _distribute(msg.sender, amount);
+    }
+
+    function pending(address staker, uint256 poolId) public view returns (uint256) {
         Pool memory pool = pools[poolId];
         uint256 rewardPerShare = pool.rewardPerBlock * PRECISION / pool.balance;
         uint256 accumulatedRewardPerShare = pool.accumulatedRewardPerShare + ((block.number - pool.lastUpdateAtBlock) * rewardPerShare);
 
-        User memory user = users[sir][poolId];
-        return (accumulatedRewardPerShare - user.claimed) / PRECISION * user.balance;
+        User memory user = users[staker][poolId];
+        return (accumulatedRewardPerShare - user.claimedAt) / PRECISION * user.balance;
+    }
+
+    function _distribute(address to, uint256 amount) private {
+
     }
 }
