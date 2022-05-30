@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 
+/// @title Staking Module
+/// @notice Core of staking module contract
+/// @author Primitive
 contract StakingModule {
     struct User {
         uint256 balance;
