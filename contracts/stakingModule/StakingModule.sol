@@ -1,10 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 
-/// @title Staking Module
-/// @notice Core of staking module contract
+import "./ERC1155TokenReceiver.sol";
+import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+
+/**
+ * TODO:
+ * - [] Add a reentrancy protection
+ */
+/// @title Staking Module Contract
+/// @notice Core of the staking module contract
 /// @author Primitive
-contract StakingModule {
+contract StakingModule is ERC1155TokenReceiver {
     struct User {
         uint256 balance;
         uint256 claimedAt;
@@ -58,6 +65,7 @@ contract StakingModule {
         pools[poolId].balance += amount;
         users[msg.sender][poolId].balance += amount;
         users[msg.sender][poolId].claimedAt = pools[poolId].accumulatedRewardPerShare;
+
     }
 
     function withdraw(uint256 poolId, uint256 amount) calibrate(poolId) external {
