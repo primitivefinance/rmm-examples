@@ -19,8 +19,9 @@ contract StakingModule {
         uint256 balance;
     }
 
-    Pool[] public pools;
+    mapping(uint256 => Pool) public pools;
     mapping(address => mapping(uint256 => User)) public users;
+    uint256 public pc;
 
     address public immutable rewardToken;
     uint256 public PRECISION = 10 ** 12;
@@ -46,14 +47,11 @@ contract StakingModule {
         address token,
         uint256 rewardPerBlock
     ) external {
-        pools.push(Pool({
-            tokenId: tokenId,
-            token: token,
-            rewardPerBlock: rewardPerBlock,
-            accumulatedRewardPerShare: 0,
-            lastUpdateAtBlock: block.number,
-            balance: 0
-        }));
+        pools[pc].tokenId = tokenId;
+        pools[pc].token = token;
+        pools[pc].rewardPerBlock = rewardPerBlock;
+        pools[pc].lastUpdateAtBlock = block.number;
+        ++pc;
     }
 
     function deposit(uint256 poolId, uint256 amount) calibrate(poolId) external {
