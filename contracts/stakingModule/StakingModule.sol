@@ -30,6 +30,8 @@ contract StakingModule is ERC1155TokenReceiver {
     mapping(address => mapping(uint256 => User)) public users;
     uint256 public pc;
 
+    bytes private empty;
+
     address public immutable rewardToken;
     uint256 public PRECISION = 10 ** 12;
 
@@ -65,7 +67,13 @@ contract StakingModule is ERC1155TokenReceiver {
         pools[poolId].balance += amount;
         users[msg.sender][poolId].balance += amount;
         users[msg.sender][poolId].claimedAt = pools[poolId].accumulatedRewardPerShare;
-
+        IERC1155(pools[poolId].token).safeTransferFrom(
+            msg.sender,
+            address(this),
+            pools[poolId].tokenId,
+            amount,
+            empty
+        );
     }
 
     function withdraw(uint256 poolId, uint256 amount) calibrate(poolId) external {
@@ -73,6 +81,13 @@ contract StakingModule is ERC1155TokenReceiver {
         users[msg.sender][poolId].claimedAt = pools[poolId].accumulatedRewardPerShare;
         pools[poolId].balance -= amount;
         users[msg.sender][poolId].balance -= amount;
+        IERC1155(pools[poolId].token).safeTransferFrom(
+            address(this),
+            msg.sender,
+            pools[poolId].tokenId,
+            amount,
+            empty
+        );
     }
 
     function claim(uint256 poolId) calibrate(poolId) public {
