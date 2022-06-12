@@ -3,11 +3,13 @@ pragma solidity 0.8.13;
 
 import "./ERC1155TokenReceiver.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../libraries/TransferHelper.sol";
 
-/**
- * TODO:
- * - [] Add a reentrancy protection
- */
+/// TODO:
+/// - Add a reentrancy protection
+/// - Replace Open Zeppelin by Bits
+
 /// @title Staking Module Contract
 /// @notice Core of the staking module contract
 /// @author Primitive
@@ -106,6 +108,6 @@ contract StakingModule is ERC1155TokenReceiver {
     }
 
     function _distribute(address to, uint256 amount) private {
-
+        TransferHelper.safeTransfer(rewardToken, to, amount);
     }
 }
