@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "./interfaces/IERC1155TokenReceiver.sol";
+import "./IERC1155TokenReceiver.sol";
 
 /// @title ERC1155 Token Receiver
 /// @notice Abstract contract allowing the reception of ERC1155 tokens
