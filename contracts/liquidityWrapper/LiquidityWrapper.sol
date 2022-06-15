@@ -82,6 +82,7 @@ contract LiquidityWrapper is
     /// @inheritdoc ILiquidityWrapper
     function unwrap(address to, uint256 amount) external override {
         _burn(msg.sender, amount);
+        emit Unwrap(msg.sender, to, amount);
         IERC1155(manager).safeTransferFrom(
             address(this),
             to,
@@ -89,6 +90,5 @@ contract LiquidityWrapper is
             amount,
             empty
         );
-        emit Unwrap(msg.sender, to, amount);
     }
 }
