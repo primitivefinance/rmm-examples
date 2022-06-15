@@ -2,6 +2,7 @@
 pragma solidity 0.8.9;
 
 import "@primitivefi/rmm-manager/contracts/interfaces/IPrimitiveManager.sol";
+import "@primitivefi/rmm-manager/contracts/interfaces/IMarginManager.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 
@@ -90,7 +91,11 @@ contract LiquidityManager is ILiquidityManager, ERC1155Holder {
         (uint256 delRisky, uint256 delStable) = IPrimitiveManager(manager)
             .remove(engine, poolId, delLiquidity, minRiskyOut, minStableOut);
 
-        if (delRisky != 0) IERC20(risky).transfer(msg.sender, delRisky);
-        if (delStable != 0) IERC20(stable).transfer(msg.sender, delStable);
+        IMarginManager(manager).withdraw(
+            msg.sender,
+            engine,
+            delRisky,
+            delStable
+        );
     }
 }
