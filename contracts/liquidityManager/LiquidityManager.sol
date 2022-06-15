@@ -19,13 +19,13 @@ contract LiquidityManager is ILiquidityManager, ERC1155Holder {
     /// STORAGE VARIABLES ///
 
     /// @inheritdoc ILiquidityManager
-    address public manager;
+    address public immutable manager;
 
     /// @inheritdoc ILiquidityManager
-    address public risky;
+    address public immutable risky;
 
     /// @inheritdoc ILiquidityManager
-    address public stable;
+    address public immutable stable;
 
     /// @inheritdoc ILiquidityManager
     mapping(address => uint256) public liquidityOf;
