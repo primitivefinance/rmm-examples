@@ -5,6 +5,7 @@ import "@primitivefi/rmm-manager/contracts/interfaces/IPrimitiveManager.sol";
 import "@primitivefi/rmm-manager/contracts/interfaces/IMarginManager.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "../libraries/TransferHelper.sol";
 
 import "./ILiquidityManager.sol";
 
@@ -55,8 +56,8 @@ contract LiquidityManager is ILiquidityManager, ERC1155Holder {
         uint256 delStable,
         uint256 minLiquidityOut
     ) external {
-        IERC20(risky).transferFrom(msg.sender, address(this), delRisky);
-        IERC20(stable).transferFrom(msg.sender, address(this), delStable);
+        TransferHelper.safeTransferFrom(risky, msg.sender, address(this), delRisky);
+        TransferHelper.safeTransferFrom(stable, msg.sender, address(this), delStable);
 
         uint256 delLiquidity = IPrimitiveManager(manager).allocate(
             address(this),
