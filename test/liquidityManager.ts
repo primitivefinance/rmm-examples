@@ -74,9 +74,26 @@ runTest('LiquidityManager', function () {
         delLiquidity,
       );
 
+      const riskySnapshot = await this.contracts.risky.balanceOf(this.wallets.deployer.address);
+      const stableSnapshot = await this.contracts.stable.balanceOf(this.wallets.deployer.address);
+
+      await liquidityManager.remove(
+        this.contracts.primitiveEngine.address,
+        poolId,
+        delLiquidity,
+        delRisky,
+        delStable,
+      );
+
+      expect(await this.contracts.risky.balanceOf(this.wallets.deployer.address))
+        .to.equal(riskySnapshot.add(delRisky));
+
+      expect(await this.contracts.stable.balanceOf(this.wallets.deployer.address))
+        .to.equal(stableSnapshot.add(delStable));
+
       expect(
         await liquidityManager.liquidityOf(this.wallets.deployer.address)
-      ).to.be.equal(delLiquidity);
+      ).to.be.equal(0);
     });
   })
 });
