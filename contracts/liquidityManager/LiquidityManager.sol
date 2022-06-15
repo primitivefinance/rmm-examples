@@ -71,12 +71,6 @@ contract LiquidityManager is ILiquidityManager, ERC1155Holder {
         );
 
         liquidityOf[msg.sender] += delLiquidity;
-
-        uint256 dust = IERC20(risky).balanceOf(address(this));
-        if (dust != 0) IERC20(risky).transfer(msg.sender, dust);
-
-        dust = IERC20(stable).balanceOf(address(this));
-        if (dust != 0) IERC20(stable).transfer(msg.sender, dust);
     }
 
     /// @inheritdoc ILiquidityManager
