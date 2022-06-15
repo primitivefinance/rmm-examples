@@ -22,13 +22,13 @@ contract LiquidityWrapper is
     /// STORAGE VARIABLES ///
 
     /// @inheritdoc ILiquidityWrapper
-    address public override manager;
+    address public immutable override manager;
 
     /// @inheritdoc ILiquidityWrapper
-    uint256 public override poolId;
+    uint256 public immutable override poolId;
 
     /// @dev Null variable to pass to `safeTransferFrom`
-    bytes private empty;
+    bytes private constant empty = "";
 
     /// EFFECT FUNCTIONS ///
 
