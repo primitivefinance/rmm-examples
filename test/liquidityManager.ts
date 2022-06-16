@@ -47,7 +47,7 @@ runTest('LiquidityManager', function () {
       );
 
       expect(
-        await liquidityManager.liquidityOf(this.wallets.deployer.address)
+        await liquidityManager.liquidityOf(this.wallets.deployer.address, poolId)
       ).to.be.equal(delLiquidity);
     });
 
@@ -92,7 +92,7 @@ runTest('LiquidityManager', function () {
         .to.equal(stableSnapshot.add(delStable));
 
       expect(
-        await liquidityManager.liquidityOf(this.wallets.deployer.address)
+        await liquidityManager.liquidityOf(this.wallets.deployer.address, poolId)
       ).to.be.equal(0);
     });
   })
