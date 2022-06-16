@@ -28,7 +28,7 @@ contract LiquidityManager is ILiquidityManager, ERC1155Holder {
     address public immutable stable;
 
     /// @inheritdoc ILiquidityManager
-    mapping(address => uint256) public liquidityOf;
+    mapping(address => mapping(bytes32 => uint256)) public liquidityOf;
 
     /// EFFECT FUNCTIONS ///
 
@@ -70,7 +70,7 @@ contract LiquidityManager is ILiquidityManager, ERC1155Holder {
             minLiquidityOut
         );
 
-        liquidityOf[msg.sender] += delLiquidity;
+        liquidityOf[msg.sender][poolId] += delLiquidity;
     }
 
     /// @inheritdoc ILiquidityManager
@@ -81,7 +81,7 @@ contract LiquidityManager is ILiquidityManager, ERC1155Holder {
         uint256 minRiskyOut,
         uint256 minStableOut
     ) external {
-        liquidityOf[msg.sender] -= delLiquidity;
+        liquidityOf[msg.sender][poolId] -= delLiquidity;
 
         (uint256 delRisky, uint256 delStable) = IPrimitiveManager(manager)
             .remove(engine, poolId, delLiquidity, minRiskyOut, minStableOut);

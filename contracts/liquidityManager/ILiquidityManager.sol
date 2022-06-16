@@ -59,5 +59,5 @@ interface ILiquidityManager {
     /// @notice   Amount of liquidity pool tokens currently owned by
     ///           a user and managed by the LiquidityManager contract
     /// @return   Amount of liquidity pool tokens
-    function liquidityOf(address) external view returns (uint256);
+    function liquidityOf(address, bytes32) external view returns (uint256);
 }
