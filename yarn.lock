@@ -721,17 +721,22 @@
     "@types/sinon-chai" "^3.2.3"
     "@types/web3" "1.0.19"
 
+"@openzeppelin/contracts@4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.1.0.tgz#baec89a7f5f73e3d8ea582a78f1980134b605375"
+  integrity sha512-TihZitscnaHNcZgXGj9zDLDyCqjziytB4tMCwXq0XimfWkAjBYyk5/pOsDbbwcavhlc79HhpTEpQcrMnPVa1mw==
+
 "@openzeppelin/contracts@^4.1.0":
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-4.4.0.tgz#4a1df71f736c31230bbbd634dfb006a756b51e6b"
   integrity sha512-dlKiZmDvJnGRLHojrDoFZJmsQVeltVeoiRN7RK+cf2FmkhASDEblE0RiaYdxPNsUZa6mRG8393b9bfyp+V5IAw==
 
-"@primitivefi/rmm-core@^1.0.0":
+"@primitivefi/rmm-core@1.0.0", "@primitivefi/rmm-core@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@primitivefi/rmm-core/-/rmm-core-1.0.0.tgz#cddd7d554f34179312a34208d40f4d4ff573970c"
   integrity sha512-ac12fse0rRicTOJLssRPW+X36sZSefnZ/Dz9ElIwh586CiY8O+tJLWg4T/B1ymvDF2ils+RtSLWxMWQ1Mb4k9Q==
 
-"@primitivefi/rmm-manager@^1.0.0":
+"@primitivefi/rmm-manager@1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@primitivefi/rmm-manager/-/rmm-manager-1.0.0.tgz#f95a95925d0a3ff4c224f2fcf9255d33c4b21fa4"
   integrity sha512-ccaQsuNqKBLPjNFRezc9YRt4Uu9d6VJgNlJ8Lp2Z/AojT7P/C7gDBvgGN+GUsGKVAkhHFu9oq65UPfLcVVjeEQ==
