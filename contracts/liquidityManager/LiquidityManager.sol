@@ -45,6 +45,9 @@ contract LiquidityManager is ILiquidityManager, ERC1155Holder {
         risky = risky_;
         stable = stable_;
 
+        // Warning: this approval mechanism is basic and could be abused by potential
+        // malicious actors. A better implementation would be to check the allowance
+        // before allocating or having a public approve function
         IERC20(risky).approve(manager, type(uint256).max);
         IERC20(stable).approve(manager, type(uint256).max);
     }
